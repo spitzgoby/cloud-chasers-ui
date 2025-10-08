@@ -33,6 +33,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <nav className="pt-8 pl-8 flex">
+          <img src="/southwest-logo.svg" />
+        </nav>
         {children}
         <ScrollRestoration />
         <Scripts />
