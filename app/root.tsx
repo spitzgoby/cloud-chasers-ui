@@ -33,8 +33,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <nav className="pt-8 pl-8 flex">
+        <nav className="p-8 flex justify-between align-center">
           <img src="/southwest-logo.svg" />
+          <a href="/" className="no-underline text-[#304cb2] hover:text-[#1a2c80]">
+            Previous Campaigns
+          </a>
         </nav>
         {children}
         <ScrollRestoration />
