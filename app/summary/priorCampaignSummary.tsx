@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom"; // or from "@remix-run/react"
+import { useSearchParams } from "react-router"; 
 
 export default function PriorCampaignSummary() {
   const [params] = useSearchParams();

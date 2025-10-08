@@ -129,9 +129,8 @@ export const Input = ({
       type === "primary"
         ? disabled
           ? "bg-gray-300 text-gray-600"
-          : "bg-blue-600 hover:bg-blue-900 text-white"
+          : "bg-[#304cb2] hover:bg-[#1a2c80] text-white"
         : "border border-blue-900 hover:bg-gray-100";
-
     const cursorClassName = disabled ? "cursor-default" : "cursor-pointer hover:-rotate-45";
 
     return `${colorClassName} ${cursorClassName} rounded-full w-8 h-8 flex items-center justify-center transition-colors transition-transform duration-200`;

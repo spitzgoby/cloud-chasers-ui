@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router"; 
 import { ClassicCard, FeatureCard, MediaLeftCard, WideCard, type CardItem, cx } from "./index";
 
 const demoData: CardItem[] = [
