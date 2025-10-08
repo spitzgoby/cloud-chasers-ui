@@ -1,20 +1,29 @@
 import type { ChangeEvent } from "react";
+import { useRef, useState } from "react";
+import { v4 as uuid } from "uuid";
+import { ImagePreview } from "~/imagePreview/imagePreview";
 
-type InputButton = {
-  action: () => void;
-  disabled?: boolean;
-  icon: string;
-  key: string;
-  type?: "primary" | "secondary";
+type ReferenceImage = {
+  imageId: string;
+  imagePath: string;
+  title: string;
 };
 
 type InputProps = {
-  actions?: InputButton[];
   onChange?: (value: string) => void;
+  onFileUpload?: (file: File) => void;
   placeholder: string;
 };
 
-export const Input = ({ actions = [], onChange, placeholder }: InputProps) => {
+export const Input = ({ onChange, onFileUpload, placeholder }: InputProps) => {
+  const [value, setValue] = useState("");
+  const [referenceImages, setReferenceImages] = useState<ReferenceImage[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const actions = [
+    {action: triggerFileUpload, disabled: false, icon: "📎", key: "attach", type: "secondary" as const },
+    {action: () => console.log("send clicked"), disabled: value.length === 0, icon: "✉️", key: "send", type: "primary" as const}
+  ];
+
   return (
     <div className="w-full border rounded-lg">
       <div className="px-4 py-2">
@@ -24,19 +33,41 @@ export const Input = ({ actions = [], onChange, placeholder }: InputProps) => {
           placeholder={placeholder}
           rows={1}
           onInput={handleAutoResize}
+          value={value}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleFileChange}
         />
       </div>
       <div className="border-t border-gray-200"></div>
-      <div className="px-4 py-2 flex justify-end gap-2">
-        {actions.map(({ action, disabled, icon, key, type }) => (
-          <button
-            key={key}
-            onClick={action}
-            className={getActionButtonClassName({ disabled, type })}
-          >
-            {icon}
-          </button>
-        ))}
+      <div className="px-4 py-2 flex justify-between gap-2">
+        <div className="flex gap-2">
+          {referenceImages.length > 0 && referenceImages.map(({ imageId, imagePath, title }) => (
+            <ImagePreview
+              key={imageId}
+              alt="Uploaded"
+              imageId={imageId}
+              imagePath={imagePath}
+              onDelete={handleDeleteImage}
+              title={title}
+            />
+          ))}
+        </div>
+        <div className="flex gap-2">
+          {actions.map(({ action, disabled, icon, key, type }) => (
+            <button
+              key={key}
+              onClick={action}
+              className={getActionButtonClassName({ disabled, type })}
+            >
+              {icon}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -58,6 +89,7 @@ export const Input = ({ actions = [], onChange, placeholder }: InputProps) => {
   }
 
   function handleInputChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    setValue(event.target.value);
     onChange?.(event.target.value);
   }
 
@@ -65,5 +97,33 @@ export const Input = ({ actions = [], onChange, placeholder }: InputProps) => {
     const textarea = event.currentTarget;
     textarea.style.height = 'auto';
     textarea.style.height = textarea.scrollHeight + 'px';
+  }
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setReferenceImages((prevImages) => [
+          ...prevImages,
+          { imageId: uuid(), imagePath: e.target?.result as string, title: file.name },
+        ]);
+      };
+      reader.readAsDataURL(file);
+      onFileUpload?.(file);
+    }
+  }
+
+  function handleDeleteImage(imageId: string) {
+    setReferenceImages((prevImages) => prevImages.filter((image) => image.imageId !== imageId));
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
+  function triggerFileUpload() {
+    fileInputRef.current?.click();
   }
 };

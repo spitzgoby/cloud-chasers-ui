@@ -5,14 +5,20 @@ export const Generator = () => {
   const [value, setValue] = useState("");
 
   return (
-    <Input actions={getInputActions()} onChange={handleCreateInputChange} placeholder="What do you want to create?" />
+    <Input 
+      onChange={handleCreateInputChange} 
+      onFileUpload={handleFileUpload}
+      placeholder="What do you want to create?" 
+    />
   );
 
-  function getInputActions() {
-    return [
-      {action: () => console.log("attach clicked"), disabled: false, icon: "📎", key: "attach", type: "secondary" as const },
-      {action: () => console.log("send clicked"), disabled: value.length === 0, icon: "✉️", key: "send", type: "primary" as const}
-    ];
+  function handleFileUpload(file: File) {
+    console.log("File uploaded:", file.name, file.size);
+    // Handle file upload logic here
+  }
+
+  function triggerFileUpload() {
+    // This will be passed to the Input component
   }
 
   function handleCreateInputChange(value: string) {
