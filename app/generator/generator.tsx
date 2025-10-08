@@ -1,22 +1,32 @@
 import { useState } from "react";
 import { Input } from "~/input/input";
 
+import type { ReferenceImage } from "~/input/input";
+
 export const Generator = () => {
   const [value, setValue] = useState("");
+  const [referenceImages, setReferenceImages] = useState<ReferenceImage[]>([]);
 
   return (
-    <Input actions={getInputActions()} onChange={handleCreateInputChange} placeholder="What do you want to create?" />
+    <Input 
+      onChange={handleCreateInputChange} 
+      onDeleteReferenceImage={handleDeleteReferenceImage}
+      onUploadReferenceImage={handleReferenceImageUpload}
+      placeholder="What do you want to create?"
+      referenceImages={referenceImages}
+      value={value}
+    />
   );
 
-  function getInputActions() {
-    return [
-      {action: () => console.log("attach clicked"), disabled: false, icon: "📎", key: "attach", type: "secondary" as const },
-      {action: () => console.log("send clicked"), disabled: value.length === 0, icon: "✉️", key: "send", type: "primary" as const}
-    ];
+  function handleReferenceImageUpload(image: ReferenceImage) {
+    setReferenceImages((referenceImages) => [...referenceImages, image]); 
   }
 
   function handleCreateInputChange(value: string) {
-    console.log(value);
     setValue(value);
+  }
+
+  function handleDeleteReferenceImage(imageId: string) {
+    setReferenceImages((referenceImages) => referenceImages.filter((image) => image.imageId !== imageId));
   }
 };
