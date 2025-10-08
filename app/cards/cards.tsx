@@ -123,7 +123,7 @@ export default function Cards({ data = demoData }: { data?: CardItem[] }) {
 
   const confirm = () => {
     if (!selected) return;
-    navigate(`/confirmation?selected=${encodeURIComponent(selected)}`);
+    navigate(`/priorCampaignSummaryPage?selected=${encodeURIComponent(selected)}`);
   };
 
   const touch = React.useRef<{ x: number | null }>({ x: null });
@@ -138,7 +138,6 @@ export default function Cards({ data = demoData }: { data?: CardItem[] }) {
 
   return (
     <div className="mx-auto max-w-6xl p-6 bg-zinc-50">
-      {/* Controls */}
       <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div>
           <input
@@ -164,13 +163,11 @@ export default function Cards({ data = demoData }: { data?: CardItem[] }) {
         </div>
       </div>
 
-      {/* Carousel */}
       <div
         className="select-none"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        {/* Slide content: trio layout */}
         <div className="lg:flex lg:items-start lg:gap-6">
           <div className="lg:w-2/3">
             {first && (
@@ -193,7 +190,6 @@ export default function Cards({ data = demoData }: { data?: CardItem[] }) {
           </div>
         </div>
 
-        {/* Carousel controls */}
         <div className="mt-6 flex items-center justify-between">
           <button
             onClick={prev}
@@ -223,7 +219,6 @@ export default function Cards({ data = demoData }: { data?: CardItem[] }) {
         </div>
       </div>
 
-      {/* Confirm bar */}
       <div className="sticky bottom-0 mt-8 flex items-center justify-end gap-3 rounded-xl border bg-white/80 p-4 backdrop-blur">
         <span className="text-sm text-zinc-600">
           {selected ? (
@@ -246,7 +241,6 @@ export default function Cards({ data = demoData }: { data?: CardItem[] }) {
         </button>
       </div>
 
-      {/* Empty state */}
       {filtered.length === 0 && (
         <div className="mt-10 rounded-2xl border border-dashed p-10 text-center text-sm text-zinc-500">
           No results. Try removing some filters.

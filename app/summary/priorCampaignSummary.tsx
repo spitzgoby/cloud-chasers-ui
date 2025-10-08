@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router-dom"; // or from "@remix-run/react"
 
-export default function Summary() {
+export default function PriorCampaignSummary() {
   const [params] = useSearchParams();
   const selected = params.get("selected");
 

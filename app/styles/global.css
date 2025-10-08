@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap');
+
+:root {
+  color-scheme: light;
+}
+
+html, body {
+  font-family: 'Ubuntu', ui-sans-serif, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
