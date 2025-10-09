@@ -7,5 +7,12 @@ export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
   server: {
     hmr: true,
+    proxy: {
+      '/api': {
+        target: 'https://pf3w7890x3.execute-api.us-east-1.amazonaws.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/dev')
+      }
+    }
   },
 });

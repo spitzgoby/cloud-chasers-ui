@@ -18,6 +18,7 @@ type InputProps = {
   onChange: (value: string) => void;
   onDeleteReferenceImage?: (imageId: string) => void;
   onRemoveAirport?: (airport: string) => void;
+  onSubmitPrompt: () => void;
   onUploadReferenceImage?: (image: ReferenceImage) => void;
   placeholder: string;
   referenceImages: ReferenceImage[];
@@ -30,6 +31,7 @@ export const Input = ({
   onChange,
   onDeleteReferenceImage,
   onRemoveAirport,
+  onSubmitPrompt,
   onUploadReferenceImage,
   placeholder,
   referenceImages = [],
@@ -54,7 +56,7 @@ export const Input = ({
       type: "secondary" as const,
     },
     {
-      action: () => console.log("send clicked"),
+      action: onSubmitPrompt,
       disabled: value.length === 0,
       icon: SendIcon,
       key: "send",
