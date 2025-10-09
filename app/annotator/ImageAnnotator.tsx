@@ -1,6 +1,7 @@
-import React from "react";
+import * as React from "react";
 import { useNavigate } from "react-router";
 import SWButton from "../components/SWAButton";
+import { Interstitial } from "../interstitial/interstitial";
 
 export type AnnotatedItem = {
   img: string;
@@ -15,6 +16,20 @@ type AnnotatedItemUI = AnnotatedItem & { selected: boolean };
 
 export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
   const navigate = useNavigate();
+  const [submitting, setSubmitting] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [showInterstitial, setShowInterstitial] = React.useState(false);
+  const [interstitialMsg, setInterstitialMsg] = React.useState("Submitting…");
+
+  function filenameFromUrl(u: string) {
+    try {
+      const url = new URL(u);
+      const last = url.pathname.split("/").filter(Boolean).pop() || "";
+      return last;
+    } catch {
+      return u;
+    }
+  }
   const [items, setItems] = React.useState<AnnotatedItemUI[]>(
     data.map((d) => ({
       img: d.img,
@@ -50,66 +65,100 @@ export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
   const selectedCount = items.filter((i) => i.selected).length;
   const canSubmit = selectedCount > 0;
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    setError(null);
 
-    const selectedItems = items.filter((i) => i.selected);
+    setInterstitialMsg("Submitting selected images…");
+    setShowInterstitial(true);
 
-    const payload: AnnotatedItem[] = items
-      .filter((i) => i.selected)
-      .map(({ selected, ...rest }) => rest);
+    try {
+      const payload: AnnotatedItem[] = items
+        .filter((i) => i.selected)
+        .map(({ selected, ...rest }) => rest);
+
+      if (payload.length === 0) {
+        setSubmitting(false);
+        return;
+      }
 
       const now = Date.now();
-  const generatedJSON = payload.map((it, idx) => ({
-    modDate: now,
-    index: "content-service-placements-idx-prodb-v20240529",
-    contentBlockId: null,
-    id: `auto-${idx}-${now}`,
-    crDate: now,
-    type: "special-offer",
-    lang: "en",
-    pubDate: now,
-    expDate: null,
-    content: {
-      displayType: "special-offer",
-      placement: {
-        fullyClickable: true,
-        text: {
-          primaryText: {
-            fontSize: "1.5rem",
-            value: it.description || "",
-            fontWeight: "bold",
+      const generatedJSON = payload.map((it, idx) => ({
+        modDate: now,
+        index: "content-service-placements-idx-prodb-v20240529",
+        contentBlockId: null,
+        id: `auto-${idx}-${now}`,
+        crDate: now,
+        type: "special-offer",
+        lang: "en",
+        pubDate: now,
+        expDate: null,
+        content: {
+          displayType: "special-offer",
+          placement: {
+            fullyClickable: true,
+            text: {
+              primaryText: {
+                fontSize: "1.5rem",
+                value: it.description || "",
+                fontWeight: "bold",
+              },
+              secondaryText: {
+                size: "medium",
+                value: it.secondaryDescription || "",
+              },
+            },
+            graphic: {
+              altText: it.title || "Image asset",
+              imagePath: it.img || "",
+              breakpoints: true,
+              width: "996px",
+              height: "560px",
+            },
+            callToAction: {
+              buttonType: "primary",
+              text: it.ctaText || "",
+              type: "button",
+              target: it.ctaLink || "",
+            },
           },
-          secondaryText: {
-            size: "medium",
-            value: it.secondaryDescription || "",
+          placementData: {
+            scaleFont: true,
           },
         },
-        graphic: {
-          altText: it.title || "Image asset",
-          imagePath: it.img || "",
-          breakpoints: true,
-          width: "996px",
-          height: "560px",
-        },
-        callToAction: {
-          buttonType: "primary",
-          text: it.ctaText || "",
-          type: "button",
-          target: it.ctaLink || "",
-        },
-      },
-      placementData: {
-        scaleFont: true,
-      },
-    },
-    revision: 1,
-  }));
+        revision: 1,
+      }));
 
-    sessionStorage.setItem("submittedImages", JSON.stringify(payload));
-  sessionStorage.setItem("generatedJSON", JSON.stringify(generatedJSON, null, 2));
+      const requestBody = {
+        return_confirmed: payload.map((it, idx) => ({
+          image: filenameFromUrl(it.img),
+          placement: generatedJSON[idx],
+        })),
+      };
 
-    navigate("/reviewSummaryPage");
+      sessionStorage.setItem("submittedImages", JSON.stringify(payload));
+      sessionStorage.setItem("generatedJSON", JSON.stringify(generatedJSON, null, 2));
+
+      const res = await fetch("/api/return_confirmed", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+
+      const text = await res.text(); 
+      if (!res.ok) {
+        throw new Error(`POST failed (${res.status}): ${text || res.statusText}`);
+      }
+
+      navigate("/reviewSummaryPage");
+    } catch (err: any) {
+      console.error(err);
+      setError(err?.message || "Something went wrong while submitting data.");
+    } finally {
+      setSubmitting(false);
+      setShowInterstitial(false);
+    }
   };
 
   const selectAll = () =>
@@ -220,33 +269,30 @@ export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
         ))}
       </div>
 
-    <div
-    className="sticky bottom-0 z-30 mt-8 flex items-center justify-end gap-3
-                rounded-xl border bg-white/95 p-4 backdrop-blur
-                opacity-100 visible"
-    >
+  <div className="sticky bottom-0 z-30 mt-8 flex items-center justify-end gap-3 rounded-xl border bg-white/95 p-4 backdrop-blur">
     {!canSubmit && (
-        <span className="text-xs text-amber-600">
+      <span className="text-xs text-amber-600">
         Select at least one image to continue.
-        </span>
+      </span>
     )}
-
+    {error && (
+      <span className="text-xs text-red-600 max-w-[50ch] truncate" title={error}>
+        {error}
+      </span>
+    )}
     <SWButton
-        type="submit"
-        disabled={!canSubmit}
-        className={[
-        "inline-flex items-center justify-center",
-        "rounded-xl px-5 py-2 text-sm font-semibold shadow",
-        canSubmit
-            ? "bg-sky-600 text-white hover:bg-sky-700"
-            : "bg-zinc-300 text-white cursor-not-allowed",
-        // make sure it's never accidentally hidden:
-        "opacity-100 !visible"
-        ].join(" ")}
+      type="submit"
+      disabled={!canSubmit || submitting}
+      className={[
+        "inline-flex items-center justify-center rounded-xl px-5 py-2 text-sm font-semibold shadow",
+        canSubmit && !submitting ? "bg-sky-600 text-white hover:bg-sky-700" : "cursor-not-allowed bg-zinc-300 text-white",
+        "opacity-100 !visible",
+      ].join(" ")}
     >
-        Submit
+      {submitting ? "Submitting…" : "Submit"}
     </SWButton>
-    </div>
+  </div>
+      <Interstitial visible={showInterstitial} message={interstitialMsg} />
     </form>
   );
 }

@@ -4,6 +4,9 @@ export default {
   content: ["./app/**/*.{ts,tsx,js,jsx}"],
   theme: {
     extend: {
+      animation: {
+        "spin-slow": "spin 4s linear infinite",
+      },
       colors: {
         "sw-blue":   "#304CB2", // Bold Blue
         "sw-red":    "#D5152E", // Warm Red
