@@ -20,6 +20,11 @@ export default defineConfig({
         target: 'https://2oxmer2e7xpnc5dpofyczm5tri0xuxar.lambda-url.us-east-1.on.aws',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/s3': {
+        target: 'https://cloudchasers-image-bucket.s3.amazonaws.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/s3/, ''),
       }
     }
   },
