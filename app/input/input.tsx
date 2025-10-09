@@ -66,7 +66,7 @@ export const Input = ({
   ];
 
   return (
-    <div className="w-full border rounded-lg">
+    <div className="w-full bg-white rounded-lg shadow-sm">
       <div className="px-4 py-2">
         <textarea
           className="w-full outline-none resize-none min-h-6"

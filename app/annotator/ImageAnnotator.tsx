@@ -208,12 +208,24 @@ export default function ImageAnnotator({ data }: { data: ImageAnnotatorDatum[] }
           >
             Clear
           </button>
+          <SWButton
+            type="submit"
+            disabled={!canSubmit || submitting}
+            className={[
+              "px-4 py-2 text-sm font-semibold rounded-lg",
+              canSubmit && !submitting
+                ? "bg-[#ffcb52] hover:bg-[#ffbf27] text-black"
+                : "cursor-not-allowed bg-zinc-300 text-black",
+            ].join(" ")}
+          >
+            {submitting ? "Submitting…" : "Submit"}
+          </SWButton>
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {items.map((it, idx) => (
-          <div key={idx} className="rounded-2xl border bg-white shadow-sm">
+          <div key={idx} className="rounded-2xl bg-white shadow-sm">
             <div className="flex items-center justify-between border-b px-4 py-3">
               <label className="flex items-center gap-2 text-sm text-zinc-800">
                 <input
@@ -241,7 +253,7 @@ export default function ImageAnnotator({ data }: { data: ImageAnnotatorDatum[] }
                 alt={`Image ${idx + 1}`}
                 className="h-full w-full object-cover"
               />
-              <button className="absolute top-2 right-2 bg-black/70 hover:bg-black/85 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors" onClick={() => setCurrentGalleryReference(it.reference)}>
+              <button className="absolute cursor-pointer top-2 right-2 bg-black/70 hover:bg-black/85 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors" onClick={() => setCurrentGalleryReference(it.reference)} title="View image size gallery">
                 <GridIcon className="w-4 h-4" fill="white" />
               </button>
             </div>
@@ -297,34 +309,23 @@ export default function ImageAnnotator({ data }: { data: ImageAnnotatorDatum[] }
 
       {renderGallery()}
 
-      <div className="sticky bottom-0 z-30 mt-8 flex items-center justify-end gap-3 rounded-xl border bg-white/95 p-4 backdrop-blur">
-        {!canSubmit && (
-          <span className="text-xs text-amber-600">
-            Select at least one image to continue.
-          </span>
-        )}
-        {error && (
-          <span
-            className="text-xs text-red-600 max-w-[50ch] truncate"
-            title={error}
-          >
-            {error}
-          </span>
-        )}
-        <SWButton
-          type="submit"
-          disabled={!canSubmit || submitting}
-          className={[
-            "inline-flex items-center justify-center rounded-xl px-5 py-2 text-sm font-semibold shadow",
-            canSubmit && !submitting
-              ? "bg-sky-600 text-white hover:bg-sky-700"
-              : "cursor-not-allowed bg-zinc-300 text-white",
-            "opacity-100 !visible",
-          ].join(" ")}
-        >
-          {submitting ? "Submitting…" : "Submit"}
-        </SWButton>
-      </div>
+      {(!canSubmit || error) && (
+        <div className="mt-8 flex items-center justify-center gap-3">
+          {!canSubmit && (
+            <span className="text-xs text-amber-600">
+              Select at least one image to continue.
+            </span>
+          )}
+          {error && (
+            <span
+              className="text-xs text-red-600 max-w-[50ch] truncate"
+              title={error}
+            >
+              {error}
+            </span>
+          )}
+        </div>
+      )}
       <Interstitial visible={showInterstitial} message={interstitialMsg} />
     </form>
   );
@@ -335,10 +336,10 @@ export default function ImageAnnotator({ data }: { data: ImageAnnotatorDatum[] }
     return (
       <div className={`fixed flex flex-col items-center gap-4 p-4 top-0 right-0 bottom-0 left-0 ${currentGalleryReference ? 'visible' : 'hidden'} bg-black/75 overflow-y-auto z-50`}>
         <button 
-          className="absolute top-4 right-4 text-white px-3 py-1 rounded bg-black/50 hover:bg-black/70"
+          className="cursor-pointer fixed top-4 right-8 text-white px-3 py-1 rounded bg-black/50 hover:bg-black/70"
           onClick={() => setCurrentGalleryReference("")}
         >
-          Close
+          Close Gallery
         </button>
         {resizedImages && (Object.keys(resizedImages) as Array<keyof typeof resizedImages>).map((image, index: number) => (
           <>
