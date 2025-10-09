@@ -85,7 +85,11 @@ export const Generator = () => {
     setShowInterstitial(true);
 
     try {
-      const response = await fetch("/api/{proxy+}", {
+      const apiUrl = import.meta.env.DEV 
+        ? "/api/{proxy+}" 
+        : "https://pf3w7890x3.execute-api.us-east-1.amazonaws.com/dev/{proxy+}";
+      
+      const response = await fetch(apiUrl, {
         method: "POST",
         mode: "cors",
         headers: {
