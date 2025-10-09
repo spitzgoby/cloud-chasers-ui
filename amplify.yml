@@ -12,6 +12,7 @@ frontend:
     baseDirectory: build/client
     files:
       - '**/*'
+      - 'favicon.ico'
   cache:
     paths:
       - node_modules/**/*
