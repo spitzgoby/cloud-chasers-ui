@@ -17,9 +17,9 @@ export default defineConfig({
     hmr: true,
     proxy: {
       '/api': {
-        target: 'https://pf3w7890x3.execute-api.us-east-1.amazonaws.com',
+        target: 'https://2oxmer2e7xpnc5dpofyczm5tri0xuxar.lambda-url.us-east-1.on.aws',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/dev')
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   },
