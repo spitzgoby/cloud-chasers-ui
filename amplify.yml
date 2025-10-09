@@ -3,7 +3,9 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci --no-optional
+        - rm -rf node_modules package-lock.json
+        - npm install --force --no-optional
+        - npm install @rollup/rollup-linux-x64-gnu --save-optional --force
     build:
       commands:
         - npm run build
