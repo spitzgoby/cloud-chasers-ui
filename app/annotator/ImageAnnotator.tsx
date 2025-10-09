@@ -140,7 +140,10 @@ export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
       sessionStorage.setItem("submittedImages", JSON.stringify(payload));
       sessionStorage.setItem("generatedJSON", JSON.stringify(generatedJSON, null, 2));
 
-      const res = await fetch("/api/return_confirmed", {
+      const apiUrl = import.meta.env.DEV 
+        ? "/api" 
+        : "https://pf3w7890x3.execute-api.us-east-1.amazonaws.com/dev/{proxy+}";
+      const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
