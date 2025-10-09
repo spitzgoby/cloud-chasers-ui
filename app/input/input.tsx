@@ -1,8 +1,9 @@
 import type { ChangeEvent } from "react";
 import { useRef } from "react";
 import { v4 as uuid } from "uuid";
+import { AirportTag } from "~/airportTag/airportTag";
 
-import { AttachIcon, SendIcon } from "~/icons";
+import { AirplaneIcon, AttachIcon, SendIcon } from "~/icons";
 import { ImagePreview } from "~/imagePreview/imagePreview";
 
 export type ReferenceImage = {
@@ -12,8 +13,11 @@ export type ReferenceImage = {
 };
 
 type InputProps = {
+  airports: string[];
+  onAddAirportClick: () => void;
   onChange: (value: string) => void;
   onDeleteReferenceImage?: (imageId: string) => void;
+  onRemoveAirport?: (airport: string) => void;
   onUploadReferenceImage?: (image: ReferenceImage) => void;
   placeholder: string;
   referenceImages: ReferenceImage[];
@@ -21,8 +25,11 @@ type InputProps = {
 };
 
 export const Input = ({
+  airports,
+  onAddAirportClick,
   onChange,
   onDeleteReferenceImage,
+  onRemoveAirport,
   onUploadReferenceImage,
   placeholder,
   referenceImages = [],
@@ -30,6 +37,14 @@ export const Input = ({
 }: InputProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const actions = [
+    {
+      action: onAddAirportClick,
+      disabled: false,
+      icon: AirplaneIcon,
+      key: "airplane",
+      title: "Add a station",
+      type: "secondary" as const,
+    },
     {
       action: triggerFileUpload,
       disabled: false,
@@ -69,18 +84,23 @@ export const Input = ({
       </div>
       <div className="border-t border-gray-200"></div>
       <div className="px-4 py-2 flex justify-between gap-2">
-        <div className="flex gap-2">
-          {referenceImages.length > 0 &&
-            referenceImages.map(({ imageId, imagePath, title }) => (
-              <ImagePreview
-                key={imageId}
-                alt="Uploaded"
-                imageId={imageId}
-                imagePath={imagePath}
-                onDelete={handleDeleteImage}
-                title={title}
-              />
-            ))}
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            {referenceImages.length > 0 &&
+              referenceImages.map(({ imageId, imagePath, title }) => (
+                <ImagePreview
+                  key={imageId}
+                  alt="Uploaded"
+                  imageId={imageId}
+                  imagePath={imagePath}
+                  onDelete={handleDeleteImage}
+                  title={title}
+                />
+              ))}
+          </div>
+          <div className="flex gap-2">
+            {airports.map((airport) => <AirportTag airport={airport} onRemoveAirport={handleRemoveAirport} />)} 
+          </div>
         </div>
         <div className="flex gap-2">
           {actions.map(({ action, disabled, icon: Icon, key, title, type }) => (
@@ -147,6 +167,10 @@ export const Input = ({
     }
 
     onDeleteReferenceImage?.(imageId);
+  }
+
+  function handleRemoveAirport(airport: string) {
+    onRemoveAirport?.(airport);
   }
 
   function triggerFileUpload() {
