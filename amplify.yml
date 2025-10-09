@@ -3,7 +3,6 @@ frontend:
   phases:
     preBuild:
       commands:
-        - nvm use 24.8.0
         - rm -rf node_modules package-lock.json
         - npm install --legacy-peer-deps
     build:
