@@ -142,7 +142,7 @@ export default function ImageAnnotator({ data }: { data: ImageAnnotatorDatum[] }
       }));
 
       const requestBody = {
-        return_confirmed: payload.map((it, idx) => ({
+        confirm: payload.map((it, idx) => ({
           image: filenameFromUrl(it.img),
           placement: generatedJSON[idx],
         })),
