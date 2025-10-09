@@ -36,9 +36,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="bg-zinc-50">
         <nav className="p-8 flex justify-between align-center bg-white">
-          <Link to="/">
-            <img src="/southwest-logo.svg" />
-          </Link>
+          <div>
+            <Link to="/">
+              <img src="/southwest-logo.svg" />
+            </Link>
+            <h1 className="text-2xl font-semibold text-zinc-900 mt-2">PixelPilot</h1>
+          </div>
           <a href="/priorCampaigns" className="no-underline text-[#304cb2] hover:text-[#1a2c80]">
             Previous Campaigns
           </a>
