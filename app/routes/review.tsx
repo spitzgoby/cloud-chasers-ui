@@ -9,7 +9,7 @@ export default function Review() {
   const backendImages = useMemo(() => {
     if (resizedImages) {
       if (Array.isArray(resizedImages)) {
-        return resizedImages.map((resizedImage: any) => ({ img: resizedImage.xl as string, reference, resizedImages }));
+        return resizedImages.map((resizedImage: any) => ({ img: resizedImage.xl as string, reference, resizedImages: resizedImage }));
       } else {
         return [{ img: resizedImages.xl as string, reference, resizedImages }];
       }
