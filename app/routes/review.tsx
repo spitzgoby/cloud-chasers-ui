@@ -5,13 +5,13 @@ import { useMemo } from "react";
 export default function Review() {
   const { state: locationState } = useLocation();
 
-  const { resized_images: resizedImages } = locationState?.data ?? {};
+  const { reference, resized_images: resizedImages } = locationState?.data ?? {};
   const backendImages = useMemo(() => {
     if (resizedImages) {
       if (Array.isArray(resizedImages)) {
-        return resizedImages.map((resizedImage: any) => ({ img: resizedImage.xl as string }));
+        return resizedImages.map((resizedImage: any) => ({ img: resizedImage.xl as string, reference, resizedImages }));
       } else {
-        return [{ img: resizedImages.xl as string }];
+        return [{ img: resizedImages.xl as string, reference, resizedImages }];
       }
     }
 

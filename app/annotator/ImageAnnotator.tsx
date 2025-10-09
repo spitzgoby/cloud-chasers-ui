@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router";
 import SWButton from "../components/SWAButton";
+import { GridIcon } from "~/icons";
 import { Interstitial } from "../interstitial/interstitial";
 
 export type AnnotatedItem = {
@@ -10,15 +11,23 @@ export type AnnotatedItem = {
   secondaryDescription: string;
   ctaText: string;
   ctaLink: string;
+  reference: string;
+  resizedImages: { sm: string, md: string, lg: string, xl: string };
 };
 
+type ImageAnnotatorDatum = {
+  img: string
+  reference: string
+  resizedImages: { sm: string, md: string, lg: string, xl: string };
+}
 type AnnotatedItemUI = AnnotatedItem & { selected: boolean };
 
-export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
+export default function ImageAnnotator({ data }: { data: ImageAnnotatorDatum[] }) {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
   const [showInterstitial, setShowInterstitial] = React.useState(false);
+  const [currentGalleryReference, setCurrentGalleryReference] = React.useState("");
   const [interstitialMsg, setInterstitialMsg] = React.useState("Submitting…");
 
   function filenameFromUrl(u: string) {
@@ -39,6 +48,8 @@ export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
       ctaText: "",
       ctaLink: "",
       selected: false,
+      reference: d.reference,
+      resizedImages: d.resizedImages
     }))
   );
 
@@ -138,10 +149,13 @@ export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
       };
 
       sessionStorage.setItem("submittedImages", JSON.stringify(payload));
-      sessionStorage.setItem("generatedJSON", JSON.stringify(generatedJSON, null, 2));
+      sessionStorage.setItem(
+        "generatedJSON",
+        JSON.stringify(generatedJSON, null, 2)
+      );
 
-      const apiUrl = import.meta.env.DEV 
-        ? "/api" 
+      const apiUrl = import.meta.env.DEV
+        ? "/api"
         : "https://pf3w7890x3.execute-api.us-east-1.amazonaws.com/dev/{proxy+}";
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -149,9 +163,11 @@ export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
         body: JSON.stringify(requestBody),
       });
 
-      const text = await res.text(); 
+      const text = await res.text();
       if (!res.ok) {
-        throw new Error(`POST failed (${res.status}): ${text || res.statusText}`);
+        throw new Error(
+          `POST failed (${res.status}): ${text || res.statusText}`
+        );
       }
 
       navigate("/reviewSummaryPage");
@@ -173,7 +189,9 @@ export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="flex flex-wrap items-center gap-3 justify-between">
         <div className="text-sm text-zinc-600">
-          Selected: <span className="font-medium text-zinc-900">{selectedCount}</span> / {items.length}
+          Selected:{" "}
+          <span className="font-medium text-zinc-900">{selectedCount}</span> /{" "}
+          {items.length}
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -223,6 +241,9 @@ export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
                 alt={`Image ${idx + 1}`}
                 className="h-full w-full object-cover"
               />
+              <button className="absolute top-2 right-2 bg-black/70 hover:bg-black/85 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors" onClick={() => setCurrentGalleryReference(it.reference)}>
+                <GridIcon className="w-4 h-4" fill="white" />
+              </button>
             </div>
 
             <div className="space-y-3 p-4">
@@ -236,7 +257,9 @@ export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
 
               <textarea
                 value={it.description}
-                onChange={(e) => updateField(idx, "description", e.target.value)}
+                onChange={(e) =>
+                  updateField(idx, "description", e.target.value)
+                }
                 placeholder="Primary description…"
                 rows={2}
                 className="w-full resize-none rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm outline-none focus:border-sky-300 focus:ring-2 focus:ring-sky-100"
@@ -272,30 +295,58 @@ export default function ImageAnnotator({ data }: { data: { img: string }[] }) {
         ))}
       </div>
 
-  <div className="sticky bottom-0 z-30 mt-8 flex items-center justify-end gap-3 rounded-xl border bg-white/95 p-4 backdrop-blur">
-    {!canSubmit && (
-      <span className="text-xs text-amber-600">
-        Select at least one image to continue.
-      </span>
-    )}
-    {error && (
-      <span className="text-xs text-red-600 max-w-[50ch] truncate" title={error}>
-        {error}
-      </span>
-    )}
-    <SWButton
-      type="submit"
-      disabled={!canSubmit || submitting}
-      className={[
-        "inline-flex items-center justify-center rounded-xl px-5 py-2 text-sm font-semibold shadow",
-        canSubmit && !submitting ? "bg-sky-600 text-white hover:bg-sky-700" : "cursor-not-allowed bg-zinc-300 text-white",
-        "opacity-100 !visible",
-      ].join(" ")}
-    >
-      {submitting ? "Submitting…" : "Submit"}
-    </SWButton>
-  </div>
+      {renderGallery()}
+
+      <div className="sticky bottom-0 z-30 mt-8 flex items-center justify-end gap-3 rounded-xl border bg-white/95 p-4 backdrop-blur">
+        {!canSubmit && (
+          <span className="text-xs text-amber-600">
+            Select at least one image to continue.
+          </span>
+        )}
+        {error && (
+          <span
+            className="text-xs text-red-600 max-w-[50ch] truncate"
+            title={error}
+          >
+            {error}
+          </span>
+        )}
+        <SWButton
+          type="submit"
+          disabled={!canSubmit || submitting}
+          className={[
+            "inline-flex items-center justify-center rounded-xl px-5 py-2 text-sm font-semibold shadow",
+            canSubmit && !submitting
+              ? "bg-sky-600 text-white hover:bg-sky-700"
+              : "cursor-not-allowed bg-zinc-300 text-white",
+            "opacity-100 !visible",
+          ].join(" ")}
+        >
+          {submitting ? "Submitting…" : "Submit"}
+        </SWButton>
+      </div>
       <Interstitial visible={showInterstitial} message={interstitialMsg} />
     </form>
   );
+
+  function renderGallery() {
+    const resizedImages = data.find((d) => d.reference === currentGalleryReference)?.resizedImages
+
+    return (
+      <div className={`fixed flex flex-col items-center gap-4 p-4 top-0 right-0 bottom-0 left-0 ${currentGalleryReference ? 'visible' : 'hidden'} bg-black/75 overflow-y-auto z-50`}>
+        <button 
+          className="absolute top-4 right-4 text-white px-3 py-1 rounded bg-black/50 hover:bg-black/70"
+          onClick={() => setCurrentGalleryReference("")}
+        >
+          Close
+        </button>
+        {resizedImages && (Object.keys(resizedImages) as Array<keyof typeof resizedImages>).map((image, index: number) => (
+          <>
+            <h2 className="text-xl text-white">{image}</h2>
+            <img key={index} src={resizedImages[image]} alt={`Gallery Image ${index + 1}`} className="max-w-full max-h-full object-contain" />
+          </>
+        ))} 
+      </div>
+    );
+  }
 }
