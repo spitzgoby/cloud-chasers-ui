@@ -201,7 +201,7 @@ export default function PriorCampaignGallery() {
           {currentSlice.map((it, idx) => (
             <article
               key={`${clampedPage}-${idx}-${it.img}`}
-              className="overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md"
+              className="overflow-hidden rounded-2xl bg-white shadow-sm transition hover:shadow-md"
             >
               <a href={it.jsonUrl} target="_blank" rel="noopener noreferrer" className="block">
                 <div className="aspect-[4/3]">

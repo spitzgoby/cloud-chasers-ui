@@ -197,14 +197,14 @@ export default function ImageAnnotator({ data }: { data: ImageAnnotatorDatum[] }
           <button
             type="button"
             onClick={selectAll}
-            className="rounded-lg border bg-white px-3 py-1.5 text-xs text-zinc-700 shadow-sm hover:bg-zinc-50"
+            className="rounded-lg bg-white px-4 py-2 text-sm text-zinc-700 shadow-sm hover:bg-zinc-50"
           >
             Select all
           </button>
           <button
             type="button"
             onClick={clearAll}
-            className="rounded-lg border bg-white px-3 py-1.5 text-xs text-zinc-700 shadow-sm hover:bg-zinc-50"
+            className="rounded-lg bg-white px-4 py-2 text-sm text-zinc-700 shadow-sm hover:bg-zinc-50"
           >
             Clear
           </button>
