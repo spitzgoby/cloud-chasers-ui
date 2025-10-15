@@ -43,17 +43,14 @@ export const AirportSelector = ({
     <div>
       {visible && (
         <div className="bg-black/50 fixed top-0 left-0 bottom-0 right-0 flex justify-center items-center">
-          <div className="flex flex-col gap-2 justify-between relative rounded bg-white w-1/2 sm:w-full md:w-full lg:3/4 xl:w-1/2 p-8">
-            <div className="flex justify-center">
-              <h2 className="text-2xl font-bold">Select Markets</h2>
-            </div>
+          <div className="flex flex-col gap-2 justify-between relative rounded bg-zinc-50 w-full md:w-3/4 xl:w-1/2 p-8 m-8">
             <div>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col">
-                  <label className="font-bold">Quick Select</label>
+                  <label className="font-bold">Select A Group</label>
                   <select
                     defaultValue=""
-                    className="w-full md:w-1/2 px-4 py-2 border rounded-lg outline-none [&:invalid]:text-gray-400"
+                    className="bg-white w-full px-2 py-2 border-r-8 border-transparent rounded-lg shadow-sm outline-none [&:invalid]:text-gray-400"
                     onChange={handleAirportGroupSelectorChange}
                     required
                   >
@@ -61,45 +58,47 @@ export const AirportSelector = ({
                   </select>
                 </div>
                 <div className="flex flex-col">
-                  <label className="font-bold">Select</label>
-                  <input
-                    onChange={handleAirportFilterChange}
-                    placeholder="Filter"
-                    className="w-full md:w-1/2 px-4 py-2 border rounded-lg outline-none"
-                  />
-                </div>
-                <div className="border rounded-lg max-h-48 overflow-y-auto scrollbar-hide">
-                  {filteredAirports.map(renderAirportOption)}
+                  <label className="font-bold">Select Individual Airports</label>
+                  <div className="shadow-sm ">
+                    <input
+                      onChange={handleAirportFilterChange}
+                      placeholder="Filter"
+                      className="bg-white w-full px-4 py-2 rounded-t-lg outline-none"
+                    />
+                    <div className="bg-white rounded-b-lg max-h-48 overflow-y-auto scrollbar-hide">
+                      {filteredAirports.map(renderAirportOption)}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
             <div className="flex flex-col gap-2 mt-4">
               <label className="font-bold">Selected Airports</label>
-              <div className="flex flex-wrap gap-2">
-              {selectedAirports.length > 0 &&
-                selectedAirports.map((airport) => (
-                  <AirportTag
-                    airport={airport}
-                    onRemoveAirport={handleAirportClick}
-                  />
-                ))}
-                </div>
+              <div className="flex flex-wrap bg-white shadow-sm gap-2 p-2 min-h-14">
+                {selectedAirports.length > 0 &&
+                  selectedAirports.map((airport) => (
+                    <AirportTag
+                      airport={airport}
+                      onRemoveAirport={handleAirportClick}
+                    />
+                  ))}
+              </div>
             </div>
-            <div className="flex justify-end gap-4">
+            <div className="flex justify-end gap-4 mt-4">
               <button
-                className="border text-black rounded px-4 py-2 bg-white hover:bg-[#dde7ff] transition-color duration-200 hover:cursor-pointer"
+                className="border text-[#263cbe] rounded px-4 py-2 bg-white hover:bg-[#dde7ff] transition-color duration-200 hover:cursor-pointer"
                 onClick={handleClose}
               >
                 Cancel
               </button>
               <button
-                className="border text-[#7f0c1b] rounded px-4 py-2 bg-white hover:bg-[#eea1ab] transition-color duration-200 hover:cursor-pointer"
+                className="border text-[#7f0c1b] rounded px-4 py-2 bg-white hover:bg-[#f6d0d5] transition-color duration-200 hover:cursor-pointer"
                 onClick={handleClearSelectedAirports}
               >
                 Clear
               </button>
               <button
-                className="text-black rounded px-4 py-2 bg-[#ffcb52] hover:bg-[#ffbf27] hover:cursor-pointer"
+                className="text-black border rounded px-4 py-2 bg-[#ffcb52] hover:bg-[#ffbf27] hover:cursor-pointer"
                 onClick={() => onUpdate(selectedAirports)}
               >
                 Save
@@ -122,7 +121,7 @@ export const AirportSelector = ({
 
     return (
       <div
-        className={`flex justify-between p-2 cursor-pointer hover:bg-gray-100 ${isSelected ? "bg-[#dde7ff]" : ""}`}
+        className={`flex justify-between px-4 py-2 cursor-pointer hover:bg-gray-100 ${isSelected ? "bg-[#dde7ff]" : ""}`}
         key={id}
         onClick={() => handleAirportClick(id)}
       >

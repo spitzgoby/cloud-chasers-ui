@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { AirportSelector } from "~/airportSelector/airportSelector";
+import { RemoveIcon } from "~/icons";
 import { Input } from "~/input/input";
 
 import type { ReferenceImage } from "~/input/input";
@@ -38,10 +39,10 @@ export const Generator = () => {
       {errorMessage && (
         <div className="mt-8 p-8 bg-[#eea1ab] text-[#7f0c1b] relative w-full rounded flex justify-center items-center">
           <button
-            className="absolute cursor-pointer top-2 right-4"
+            className="absolute rounded-full p-2 bg-[#7f0c1b] flex justify-center items-center cursor-pointer top-2 right-4"
             onClick={() => setErrorMessage("")}
           >
-            x
+            <RemoveIcon fill="white" />
           </button>
           {errorMessage}
         </div>
