@@ -43,7 +43,7 @@ export const AirportSelector = ({
     <div>
       {visible && (
         <div className="bg-black/50 fixed top-0 left-0 bottom-0 right-0 flex justify-center items-center">
-          <div className="flex flex-col gap-2 justify-between relative rounded bg-zinc-50 w-full md:w-3/4 xl:w-1/2 p-8 m-8">
+          <div className="flex flex-col gap-2 justify-between relative rounded bg-zinc-50 w-full md:w-3/4 xl:w-1/2 p-4 m-4">
             <div>
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col">
