@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AirportTag } from "~/airportTag/airportTag";
 import { airportGroups, airportThemeGroups, airports } from "~/data/stations";
 
@@ -38,6 +38,10 @@ export const AirportSelector = ({
   );
   const [selectedAirports, setSelectedAirports] =
     useState<string[]>(initialAirports);
+
+  useEffect(() => {
+    setSelectedAirports(initialAirports);
+  }, [initialAirports]);
 
   return (
     <div>

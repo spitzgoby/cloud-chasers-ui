@@ -87,9 +87,9 @@ export const Input = ({
       <div className="border-t border-gray-200"></div>
       <div className="px-4 py-2 flex justify-between gap-2">
         <div className="flex flex-col gap-2">
-          <div className="flex gap-2">
-            {referenceImages.length > 0 &&
-              referenceImages.map(({ imageId, imagePath, title }) => (
+          {referenceImages.length > 0 && (
+            <div className="flex gap-2">
+              {referenceImages.map(({ imageId, imagePath, title }) => (
                 <ImagePreview
                   key={imageId}
                   alt="Uploaded"
@@ -99,9 +99,15 @@ export const Input = ({
                   title={title}
                 />
               ))}
-          </div>
+            </div>
+          )}
           <div className="flex flex-wrap gap-2">
-            {airports.map((airport) => <AirportTag airport={airport} onRemoveAirport={handleRemoveAirport} />)} 
+            {airports.map((airport) => (
+              <AirportTag
+                airport={airport}
+                onRemoveAirport={handleRemoveAirport}
+              />
+            ))}
           </div>
         </div>
         <div className="flex gap-2">
@@ -130,7 +136,9 @@ export const Input = ({
           ? "bg-gray-300 text-gray-600"
           : "bg-[#304cb2] hover:bg-[#1a2c80] text-white"
         : "border border-blue-900 hover:bg-gray-100";
-    const cursorClassName = disabled ? "cursor-default" : "cursor-pointer hover:-rotate-45";
+    const cursorClassName = disabled
+      ? "cursor-default"
+      : "cursor-pointer hover:-rotate-45";
 
     return `${colorClassName} ${cursorClassName} rounded-full w-8 h-8 flex items-center justify-center transition-colors transition-transform duration-200`;
   }

@@ -35,10 +35,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-zinc-50">
-        <nav className="p-8 flex justify-between align-center bg-white">
+        <nav className="p-4 flex justify-between align-center bg-white">
           <div>
             <Link to="/">
-              <img src="/southwest-logo.svg" />
+              <img src="/southwest-logo.svg" height="31" width="148" />
             </Link>
             <h1 className="text-2xl font-semibold text-zinc-900 mt-2">PixelPilot</h1>
           </div>
