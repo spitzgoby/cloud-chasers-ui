@@ -89,7 +89,7 @@ export const Generator = () => {
     try {
       const apiUrl = import.meta.env.DEV 
         ? "/api" 
-        : "https://4gyqqb0c3m.execute-api.us-east-1.amazonaws.com";
+        : "https://hxgynebkccfk6hvvrxejssmsgy0pitde.lambda-url.us-east-1.on.aws/";
       
       const response = await fetch(apiUrl, {
         method: "POST",
