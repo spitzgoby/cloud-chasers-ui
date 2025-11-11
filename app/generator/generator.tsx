@@ -89,7 +89,7 @@ export const Generator = () => {
     try {
       const apiUrl = import.meta.env.DEV 
         ? "/api" 
-        : "https://l2dkvcl4hl.execute-api.us-east-1.amazonaws.com/dev/{proxy+}";
+        : "https://4gyqqb0c3m.execute-api.us-east-1.amazonaws.com";
       
       const response = await fetch(apiUrl, {
         method: "POST",
